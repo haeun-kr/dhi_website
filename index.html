@@ -113,7 +113,7 @@
         if (currentTab === '홈') {
             // 홈: 모든 카테고리 중 '고정된' 글만 최신순으로
             filtered = allPosts.filter(p => p.pinned === true);
-            document.getElementById('viewTitle').innerText = "📌 주요 소식 (고정됨)";
+            document.getElementById('viewTitle').innerText = "📌공지사항";
         } else {
             // 탭: 해당 카테고리 전체 (고정글 우선)
             filtered = allPosts.filter(p => p.category === currentTab)
@@ -177,7 +177,7 @@
             body: JSON.stringify({ action: "add", category: currentTab, name, message, file })
         });
         
-        setTimeout(() => { alert("등록되었습니다!"); location.reload(); }, 800);
+        setTimeout(() => { alert("등록되었습니다"); location.reload(); }, 800);
     }
 
     function toggleAdmin() {
