@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대구국제고 대외협력부</title>
+    <title>대구국제고등학교 대외협력부</title>
     <style>
         :root { --main: #3478c6; --bg: #f0f2f5; }
         body { font-family: 'Pretendard', sans-serif; margin: 0; background: var(--bg); color: #000; }
@@ -21,10 +21,6 @@
 
         .container { max-width: 95%; width: 1200px; margin: 30px auto; padding: 0 10px; position: relative; min-height: 600px; }
         
-        /* 이메일 구독 섹션 */
-        .subscribe-box { background: white; padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .subscribe-box input { flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-
         /* 홈 화면 그리드 레이아웃 */
         .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         @media (max-width: 850px) { .home-grid { grid-template-columns: 1fr; } }
@@ -46,6 +42,10 @@
         .cal-item:last-child { border-bottom: none; }
         .cal-date { font-weight: bold; color: var(--main); font-size: 15px; min-width: 70px; }
         .cal-text { flex: 1; font-size: 15px; color: #333; margin-left: 10px; }
+
+        /* 하단 이메일 구독 섹션 */
+        .subscribe-box { background: #fff; padding: 25px; border-radius: 15px; margin-top: 50px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .subscribe-box input { min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; }
 
         /* 모달 및 버튼 */
         #writeModal, #calModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
@@ -74,12 +74,6 @@
 </nav>
 
 <div class="container">
-    <div class="subscribe-box">
-        <span>📧 <b>새글 알림 받기:</b></span>
-        <input type="email" id="sub-email" placeholder="이메일 주소를 입력하세요">
-        <button class="write-trigger" onclick="subscribeEmail()">구독 신청</button>
-    </div>
-
     <div id="homeView" class="home-grid">
         <div>
             <div class="section-title">📌 주요 공지사항</div>
@@ -87,7 +81,7 @@
         </div>
         <div>
             <div class="section-title">
-                📅 학사 및 활동 일정
+                활동 일정
                 <button class="btn-s admin-only" onclick="openCalModal()" style="display:none;">+ 일정 추가</button>
             </div>
             <div id="calendarList" class="calendar-card"></div>
@@ -101,14 +95,20 @@
         </div>
         <div id="postsContainer"></div>
     </div>
+
+    <div class="subscribe-box">
+        <span> <b>공지사항 알림용 계정 입력</b></span>
+        <input type="email" id="sub-email" placeholder="이메일 주소를 입력하세요">
+        <button class="write-trigger" onclick="subscribeEmail()">저장</button>
+    </div>
 </div>
 
 <div id="writeModal">
     <div class="modal-content">
         <h3 id="modalTitle">글 작성</h3>
-        <input type="text" id="w-name" placeholder="작성자 소속, 학번, 이름 (ex. 기획단 2408 소하은)">
+        <input type="text" id="w-name" placeholder="작성자 소속, 학번, 이름(ex. 기획단 2408 소하은)">
         <textarea id="w-message" placeholder="내용을 입력하세요" rows="6"></textarea>
-        <label style="font-size: 13px; color: #666; display: block; margin-bottom: 5px;">📸 사진 첨부 (파일 선택)</label>
+        <label style="font-size: 13px; color: #666; display: block; margin-bottom: 5px;"> 사진 첨부 (파일 선택)</label>
         <input type="file" id="w-file" accept="image/*">
         <div style="display: flex; gap: 10px; margin-top: 10px;">
             <button class="write-trigger" style="flex:1;" id="finalSubmitBtn" onclick="submitPost()">등록하기</button>
@@ -120,7 +120,7 @@
 <div id="calModal">
     <div class="modal-content">
         <h3>일정 추가</h3>
-        <input type="text" id="c-date" placeholder="날짜 (예: 4/20)">
+        <input type="text" id="c-date" placeholder="날짜 (예: 2026.04.06.(월))">
         <input type="text" id="c-text" placeholder="일정 내용">
         <div style="display: flex; gap: 10px;">
             <button class="write-trigger" style="flex:1;" onclick="submitCal()">추가</button>
@@ -130,7 +130,7 @@
 </div>
 
 <script>
-
+  
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby41M05Owarkn7xPRTGcpkPrTE-vIKzqnL3yVPLpOGzqVZx6VUK0WWV20qtouOJ0yCU/exec";
     
     let currentTab = '홈';
@@ -138,19 +138,17 @@
     let isAdmin = false;
 
     async function loadData() {
-        const container = document.getElementById('postsContainer');
         const pinnedCont = document.getElementById('pinnedPosts');
         const calCont = document.getElementById('calendarList');
-        
-        pinnedCont.innerHTML = "로딩 중...";
-        calCont.innerHTML = "로딩 중...";
+        pinnedCont.innerHTML = "데이터를 불러오는 중...";
+        calCont.innerHTML = "데이터를 불러오는 중...";
 
         try {
             const res = await fetch(SCRIPT_URL);
             allData = await res.json();
             render();
         } catch (e) {
-            alert("데이터를 불러오는 데 실패했습니다.");
+            console.error(e);
         }
     }
 
@@ -176,15 +174,13 @@
         const pinned = allData.posts.filter(p => p.pinned);
         if(pinned.length === 0) pinCont.innerHTML = "<p style='color:#999;'>고정된 공지가 없습니다.</p>";
         pinned.forEach(p => {
-            const card = document.createElement('div');
-            card.className = "post-card pinned";
-            card.innerHTML = `
-                <span class="pin-label">📌 주요 공지</span>
-                <div class="post-header"><span class="post-name">${p.name}</span><span>${new Date(p.date).toLocaleDateString()}</span></div>
-                <div class="post-content">${p.message}</div>
-                ${p.file ? `<img src="${p.file}" class="img-preview">` : ''}
-            `;
-            pinCont.appendChild(card);
+            pinCont.innerHTML += `
+                <div class="post-card pinned">
+                    <span class="pin-label">📌 주요 공지</span>
+                    <div class="post-header"><span class="post-name">${p.name}</span><span>${new Date(p.date).toLocaleDateString()}</span></div>
+                    <div class="post-content">${p.message}</div>
+                    ${p.file ? `<img src="${p.file}" class="img-preview">` : ''}
+                </div>`;
         });
 
         if(allData.events.length === 0) calCont.innerHTML = "<p style='color:#999; padding:20px;'>일정이 없습니다.</p>";
@@ -209,19 +205,17 @@
         }
 
         filtered.forEach(p => {
-            const card = document.createElement('div');
-            card.className = `post-card ${p.pinned ? 'pinned' : ''}`;
-            card.innerHTML = `
-                ${p.pinned ? '<span class="pin-label">📌 고정됨</span>' : ''}
-                <div class="post-header"><span class="post-name">${p.name}</span><span>${new Date(p.date).toLocaleDateString()}</span></div>
-                <div class="post-content">${p.message}</div>
-                ${p.file ? `<img src="${p.file}" class="img-preview">` : ''}
-                ${isAdmin ? `<div style="text-align:right; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
-                    <button class="btn-s" onclick="handleAction('togglePin', ${p.id})">${p.pinned ? '고정해제' : '상단고정'}</button>
-                    <button class="btn-s" style="color:red;" onclick="handleAction('delete', ${p.id})">삭제</button>
-                </div>` : ''}
-            `;
-            cont.appendChild(card);
+            cont.innerHTML += `
+                <div class="post-card ${p.pinned ? 'pinned' : ''}">
+                    ${p.pinned ? '<span class="pin-label">📌 고정됨</span>' : ''}
+                    <div class="post-header"><span class="post-name">${p.name}</span><span>${new Date(p.date).toLocaleDateString()}</span></div>
+                    <div class="post-content">${p.message}</div>
+                    ${p.file ? `<img src="${p.file}" class="img-preview">` : ''}
+                    ${isAdmin ? `<div style="text-align:right; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                        <button class="btn-s" onclick="handleAction('togglePin', ${p.id})">${p.pinned ? '고정해제' : '상단고정'}</button>
+                        <button class="btn-s" style="color:red;" onclick="handleAction('delete', ${p.id})">삭제</button>
+                    </div>` : ''}
+                </div>`;
         });
     }
 
@@ -241,7 +235,7 @@
         const email = document.getElementById('sub-email').value;
         if(!email.includes('@')) return alert("정확한 이메일을 입력해주세요.");
         await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "subscribe", email }) });
-        alert("email 입력이 완료되었습니다.");
+        alert("저장되었습니다.");
         document.getElementById('sub-email').value = "";
     }
 
@@ -290,7 +284,7 @@
     function toggleAdmin() {
         if(!isAdmin) {
             const pw = prompt("관리자 비밀번호를 입력하세요.");
-            if(pw === "2026") { isAdmin = true; alert("관리자 로그인"); render(); }
+            if(pw === "2026") { isAdmin = true; alert("관리자 모드 전환"); render(); }
             else { alert("비밀번호가 틀렸습니다."); }
         } else { isAdmin = false; alert("로그아웃 되었습니다."); render(); }
     }
